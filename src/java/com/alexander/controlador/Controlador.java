@@ -54,6 +54,7 @@ public class Controlador extends HttpServlet {
     Carrito car = new Carrito();
 
     Fecha fechaSistem = new Fecha();
+    Cliente cliente = new Cliente();
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -95,60 +96,68 @@ public class Controlador extends HttpServlet {
                 }
                 break;
             // Dentro del switch en tu Controlador
-                case "EditarProducto":
-                    // Verificar si el usuario es un administrador
-                    if (esAdministrador(request)) {
-                        int idProductoEditar = Integer.parseInt(request.getParameter("id"));
-                        Producto productoEditar = pdao.listarId(idProductoEditar);
-                        request.setAttribute("productoEditar", productoEditar);
-                        request.getRequestDispatcher("editarProducto.jsp").forward(request, response);
-                    } else {
-                        // Usuario no autorizado, redirigir o mostrar mensaje de error
-                        request.setAttribute("mensaje", "No tienes permiso para acceder a esta página");
-                        request.getRequestDispatcher("Index.jsp").forward(request, response);
-                    }
-                    break;
+                // Dentro del switch en tu Controlador
+case "EditarProducto":
+    // Verificar si el usuario es un administrador
+    if (esAdministrador(request)) {
+       int idProductoEditar = Integer.parseInt(request.getParameter("id"));
+        Producto productoEditar = pdao.listarId(idProductoEditar);
+        request.setAttribute("productoEditar", productoEditar);
+        request.getRequestDispatcher("vistas/editarProducto.jsp").forward(request, response);
+    } else {
+        // Usuario no autorizado, redirigir o mostrar mensaje de error
+        request.setAttribute("mensaje", "No tienes permiso para acceder a esta página");
+        request.getRequestDispatcher("index.jsp").forward(request, response);
+    }
+    break;
 
-            case "ActualizarProducto":
-                ArrayList<String> proEdit = new ArrayList<>();
-                try {
-                    FileItemFactory factory = new DiskFileItemFactory();
-                    ServletFileUpload fileUpload = new ServletFileUpload(factory);
-                    List items = fileUpload.parseRequest(request);
-                    for (int i = 0; i < items.size(); i++) {
-                        FileItem fileItem = (FileItem) items.get(i);
-                        if (!fileItem.isFormField()) {
-                            File file = new File("C:\\xampp\\htdocs\\carrito\\" + fileItem.getName());
-                            fileItem.write(file);
-                            p.setImagen("http://localhost:80/carrito/" + fileItem.getName());
-                        } else {
-                            proEdit.add(fileItem.getString());
-                        }
-                    }
-        int idProductoActualizado = Integer.parseInt(proEdit.get(0));
-        Producto productoActualizado = pdao.listarId(idProductoActualizado);
-        productoActualizado.setNombres(proEdit.get(1));
-        productoActualizado.setDescripcion(proEdit.get(2));
-        productoActualizado.setPrecio(Double.parseDouble(proEdit.get(3)));
-        productoActualizado.setStock(Integer.parseInt(proEdit.get(4)));
-        productoActualizado.setImagen(p.getImagen());
+case "ActualizarProducto":
+    // Verificar si el usuario es un administrador
+    if (esAdministrador(request)) {
+        ArrayList<String> proEdit = new ArrayList<>();
+        try {
+            FileItemFactory factory = new DiskFileItemFactory();
+            ServletFileUpload fileUpload = new ServletFileUpload(factory);
+            List items = fileUpload.parseRequest(request);
+            for (int i = 0; i < items.size(); i++) {
+                FileItem fileItem = (FileItem) items.get(i);
+                if (!fileItem.isFormField()) {
+                            File file=new File("C:\\xampp\\htdocs\\carrito\\"+fileItem.getName());
+                    fileItem.write(file);
+                    p.setImagen("http://localhost:80/carrito/" + fileItem.getName());
+                } else {
+                    proEdit.add(fileItem.getString());
+                }
+            }
+            int idProductoActualizado = Integer.parseInt(proEdit.get(0));
+            Producto productoActualizado = pdao.listarId(idProductoActualizado);
+            productoActualizado.setNombres(proEdit.get(1));
+            productoActualizado.setDescripcion(proEdit.get(2));
+            productoActualizado.setPrecio(Double.parseDouble(proEdit.get(3)));
+            productoActualizado.setStock(Integer.parseInt(proEdit.get(4)));
+            productoActualizado.setImagen(p.getImagen());
 
-        boolean actualizacionExitosa = pdao.editarProducto(productoActualizado);
+            boolean actualizacionExitosa = pdao.editarProducto(productoActualizado);
 
-        if (actualizacionExitosa) {
-            productos = pdao.listar(); // Actualizar la lista de productos
-            request.setAttribute("productos", productos);
-            request.setAttribute("mensaje", "Producto actualizado correctamente.");
-        } else {
+            if (actualizacionExitosa) {
+                productos = pdao.listar(); // Actualizar la lista de productos
+                request.setAttribute("productos", productos);
+                request.setAttribute("mensaje", "Producto actualizado correctamente.");
+            } else {
+                request.setAttribute("mensaje", "Error al actualizar el producto.");
+            }
+
+        } catch (Exception e) {
+            System.err.println("" + e);
             request.setAttribute("mensaje", "Error al actualizar el producto.");
         }
-
-    } catch (Exception e) {
-        System.err.println("" + e);
-        request.setAttribute("mensaje", "Error al actualizar el producto.");
+    } else {
+        // Usuario no autorizado, redirigir o mostrar mensaje de error
+        request.setAttribute("mensaje", "No tienes permiso para acceder a esta página");
     }
     request.getRequestDispatcher("index.jsp").forward(request, response);
     break;
+
 
             case "EliminarProducto":
                 int idProductoEliminar = Integer.parseInt(request.getParameter("id"));
@@ -169,11 +178,14 @@ public class Controlador extends HttpServlet {
                 }
                 break;
 
-            case "Validar":
+           case "Validar":
                 String email = request.getParameter("txtemail");
                 String pass = request.getParameter("txtpass");
                 cl = cldao.Validar(email, pass);
+
                 if (cl.getId() != 0) {
+                    session.setAttribute("usuario", cl); // Guardar los datos del usuario en la sesión
+
                     logueo = cl.getNombres();
                     correo = cl.getEmail();
                 }
@@ -382,11 +394,20 @@ public class Controlador extends HttpServlet {
             listaProductos.add(car);
         }
     }
-    private boolean esAdministrador(HttpServletRequest request) {
+  private boolean esAdministrador(HttpServletRequest request) {
     HttpSession session = request.getSession();
     Cliente usuario = (Cliente) session.getAttribute("usuario"); // Cambia "Usuario" al nombre de tu clase de usuario
-       
-    return usuario != null && usuario.getEsAdmin() == 1; // El usuario es administrador si esAdmin es true
+    
+    if (usuario == null) {
+        System.out.println("El usuario no está autenticado");
+        return false; // No es administrador si el usuario no está autenticado
+    }
+    
+    int esAdmin = usuario.getEsAdmin();
+    System.out.println("Valor de esAdmin: " + esAdmin);
+    
+    return esAdmin == 1; // El usuario es administrador si esAdmin es igual a 1
 }
+
 
 }

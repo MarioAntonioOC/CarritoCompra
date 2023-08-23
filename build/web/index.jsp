@@ -1,5 +1,17 @@
+<%@page import="com.alexander.modelo.Cliente"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%-- Verificar si el cliente es administrador antes de mostrar la opción "Productos" --%>
+<%
+    Boolean esAdmin = false; // Por defecto, asumimos que el usuario no es administrador
+    Cliente usuario = (Cliente) session.getAttribute("usuario");
+    if (usuario != null && usuario.getEsAdmin() == 1) {
+        esAdmin = true; // El usuario es administrador
+        System.out.println("El usuario es administrador: " + esAdmin);
+    }else{
+        System.out.println("El usuario es no es adminstrador " + esAdmin);
+    }
+%>
 <!DOCTYPE html>
 <html>
     <head>
@@ -14,7 +26,7 @@
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo03" aria-controls="navbarTogglerDemo03" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
-            <a class="navbar-brand" href="#"><i>Alexander's Store</i></a>
+            <a class="navbar-brand" href="#"><i>Allison store</i></a>
             <div class="collapse navbar-collapse" id="navbarTogglerDemo03">
                 <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
                     <li class="nav-item active">
@@ -26,9 +38,12 @@
                     <li class="nav-item">
                         <a class="nav-link" href="./Controlador?accion=carrito"><i class="fas fa-cart-plus">(<label style="color: darkorange">${cont}</label>)</i> Carrito</a>
                     </li> 
-                    <li class="nav-item">
-                        <a class="nav-link" href="./Controlador?accion=NuevoProducto">Productos</a>
-                    </li> 
+        <%-- Mostrar el enlace "Productos" solo si esAdmin no es nulo y es true --%>
+        <% if (esAdmin != null && esAdmin) { %>
+            <li class="nav-item">
+                <a class="nav-link" href="./Controlador?accion=NuevoProducto">Productos</a>
+            </li>
+        <% } %>
                 </ul>
                 <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
                     <!--<form class="form-inline my-2 my-lg-0">-->

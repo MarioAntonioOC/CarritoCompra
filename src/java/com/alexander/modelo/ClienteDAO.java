@@ -28,6 +28,9 @@ public class ClienteDAO {
                 c.setDireccion(rs.getString(4));
                 c.setEmail(rs.getString(5));
                 c.setPass(rs.getString(6));
+                c.setEsAdmin(rs.getInt(7));
+                System.out.println("" + sql);
+                System.out.println("" + c.getEsAdmin());
             }
         } catch (Exception e) {
         }

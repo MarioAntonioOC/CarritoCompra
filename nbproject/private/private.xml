@@ -2,6 +2,18 @@
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
-        <group/>
+        <group>
+            <file>file:/C:/Users/VICTUS/Documents/Proyecto/CarritoCompras/web/vistas/compras.jsp</file>
+            <file>file:/C:/Users/VICTUS/Documents/Proyecto/CarritoCompras/src/java/com/alexander/modelo/Compra.java</file>
+            <file>file:/C:/Users/VICTUS/Documents/Proyecto/CarritoCompras/src/java/com/alexander/controlador/Controlador.java</file>
+            <file>file:/C:/Users/VICTUS/Documents/Proyecto/CarritoCompras/web/css/estilos.css</file>
+            <file>file:/C:/Users/VICTUS/Documents/Proyecto/CarritoCompras/web/index.jsp</file>
+            <file>file:/C:/Users/VICTUS/Documents/Proyecto/CarritoCompras/src/java/com/alexander/modelo/ProductoDAO.java</file>
+            <file>file:/C:/Users/VICTUS/Documents/Proyecto/CarritoCompras/src/java/com/alexander/modelo/ClienteDAO.java</file>
+            <file>file:/C:/Users/VICTUS/Documents/Proyecto/CarritoCompras/src/java/com/alexander/modelo/Cliente.java</file>
+            <file>file:/C:/Users/VICTUS/Documents/Proyecto/CarritoCompras/src/java/com/alexander/modelo/Producto.java</file>
+            <file>file:/C:/Users/VICTUS/Documents/Proyecto/CarritoCompras/web/vistas/editarProducto.jsp</file>
+            <file>file:/C:/Users/VICTUS/Documents/Proyecto/CarritoCompras/web/vistas/addProducto.jsp</file>
+        </group>
     </open-files>
 </project-private>
